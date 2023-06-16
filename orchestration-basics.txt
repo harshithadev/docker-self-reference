@@ -1,0 +1,18 @@
+Imagine coding calls to create or update containers, and to remove them when necessary. 
+How will you update your containers when you publish new versions? Since running containers is cheap, 
+you may want to perform rolling updates so that your application isn’t down during updates. 
+In a rolling update, a new container is started with the newest image, and once it is ready, users are routed to it, 
+then the old container is removed.  
+
+Now factor in the possibility that several Docker hosts may need to run your containers either for large workloads, 
+scaling out, or simply good reliability. 
+In such cases, you will need to set up a reverse proxy and have it route users to the appropriate containers.
+
+Kubernetes or Docker Swarm receive your orders and apply them. 
+You create a cluster of servers (a single server is fine also), 
+then you feed your Kubernetes or Docker Swarm with a file that states which containers you want, 
+how to expose them to the outside world, and how many containers should be run for each image. 
+Your orchestrator will make sure that happens.
+
+
+

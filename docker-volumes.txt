@@ -1,0 +1,18 @@
+So similar to network connections, docker is isolated from underlying memory storage of the host as well. 
+
+The data, when the container is running, gets stored into the container. And this is similar to volatile memory on your system. 
+Once the docker container is restarted or stopped the data is lost. 
+
+The rule of thumb is to keep the container stateless, that is to make sure that the container stores all its data externally on a database (sql) or distributed cache (redis)
+But if we do want it to be stateful, we have to incorporate volumes into our docker container. 
+
+Volumes can be cloud storage methods like Azure File Storage on Azure or Amazon S3 on AWS or we can use the host machine as well. 
+In order to use the host machine as persistent storage, we can use the -v flag and map a host directory to a container directory like so:
+
+> docker run -v /my/host/dir:/var/lib/mysql -d mysql
+here /my/host/dir : directory on the host 
+/var/lib/mysql/   : directory on the container 
+
+so everytime the container is stopped or restarted, the data is persistent.     
+---------------------------------------------------------------------------------------------------
+

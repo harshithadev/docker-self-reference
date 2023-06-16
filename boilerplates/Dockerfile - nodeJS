@@ -1,0 +1,87 @@
+FROM node:10-alpine
+
+# Create app directory
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
+
+# Install app dependencies
+COPY package.json /usr/src/app
+
+/
+RUN npm install
+
+WORKDIR /usr/src/app
+
+# Bundle app source
+COPY . /usr/src/app/
+
+EXPOSE 80
+
+CMD ["npm", "start"]
+
+
+------------------------------------------------------------------------------
+package.json
+
+{
+  "name": "node-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "async": "^2.4.1",
+    "cors": "^2.8.3",
+    "express": "^4.15.2"
+  }
+}
+
+
+------------------------------------------------------------------------------
+index.js
+
+
+
+const HTTP_PORT = 80;
+
+const cors = require('cors');
+const express = require('express');
+const path = require('path');
+
+var sourcesDirectory = path.resolve(__dirname, 'www');
+var app = express();
+app.use(cors());
+
+// API
+app.get('/v1/square/:value', function (req, res) {
+    const value = req.params.value;
+    const square = Math.pow(value, 2);
+    res.send({
+        value,
+        square 
+    });
+});
+
+// Static files
+app.use(express.static(sourcesDirectory, {
+    index: 'index.htm',
+    extensions: ['htm']
+}));
+
+var server = require('http').createServer(app);
+server.listen(HTTP_PORT);
+
+console.log(`Listening on http://localhost:${HTTP_PORT}`);
+
+
+------------------------------------------------------------------------------
+index.html 
+
+<h1>Hello !</h1>
+<p>This page is served by Node.JS</p>
+<p>Try our <a href="/v1/square/4">multiply API</a>.</p>
+
+
+
+------------------------------------------------------------------------------

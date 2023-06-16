@@ -1,0 +1,46 @@
+Docker containers run from docker images. So if docker images are not presented locally, it is obtained from a registery. 
+DockerHub is one such popular registry. Private registeries exsist as well.
+---------------------------------------------------------------------------------------------------
+
+note : 
+When an image is published to a registry, its name must be:
+<repository_name>/<name>:<tag>
+    tag is optional; when missing, it is considered to be latest by default
+    repository_name can be a registry DNS or the name of a registry in the Docker Hub
+---------------------------------------------------------------------------------------------------
+
+> docker pull <image_name>
+This command pulls the image from a registry, even if present.
+
+> docker run <image_name>
+This command (if image does not exist) pulls the image and starts the container 
+---------------------------------------------------------------------------------------------------
+
+
+
+
+---------------------------------------------------------------------------------------------------
+
+We can create our own docker images as well, this will keep our programs and their respective dependencies together.
+Docker images are created using 'docker build' command and a 'Dockerfile' file.
+
+> docker rmi <image_name>
+The above command removes the image 
+
+You’re free to tag your images however you want. Common tags include:
+    a version number, e.g. hello:1.0, hello:1.1, hello:1.2
+    a Git commit tag, e.g. hello:2cd7e376, hello:b43a14bb
+like : 
+docker build -t hello:1.0 .
+---------------------------------------------------------------------------------------------------
+
+Images are stored in registries :
+    Docker Hub, where you pay according to the number of private repositories used.
+    Azure Container Registry allows you to have your own private registry in Azure.
+    GitLab has an included optional Docker registry; enable it so that each project can store the images it creates.
+    The registry image allows you to host your own registry on a Docker enabled machine as a container.
+---------------------------------------------------------------------------------------------------
+
+
+Take a look at Multi-Stage Dockerfiles 
+This enables us to use a certain features from FAt-images, but use a thin-image as our container base. 

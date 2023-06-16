@@ -1,0 +1,10 @@
+By default, a docker runs in an isolated manner. 
+In order to connect with the host or other connections, a port has to be assigned in the host and has to be mapped to a port in the container 
+
+This is done by using -p tag followed by the port mapping (host port : container port)
+
+example: docker run my_container -d -p 8080:81
+where 8080 : host port 
+      8081 : container port
+---------------------------------------------------------------------------------------------------
+      

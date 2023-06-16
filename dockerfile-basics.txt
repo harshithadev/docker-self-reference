@@ -1,0 +1,101 @@
+Official documentation : https://docs.docker.com/engine/reference/builder/
+---------------------------------------------------------------------------------------------------
+
+A Dockerfile file always begins with a 'FROM' instruction because every image is based on another base image. 
+This is a powerful feature since it allows you to extend images that may already be complex.
+like : 
+> FROM debian:11
+---------------------------------------------------------------------------------------------------
+
+The CMD instruction specifies which executable is run when a container is created using your image and provides optional arguments.
+CMD command can run linux commands on the container
+like : 
+> CMD ["echo", "Hello world"]
+This displays Hello world on the screen when the container runs.
+
+Programs usually have more files from which the application runs. So for this purpose, the files have to be transferred into the container directory.
+This is done with this line, in the Dockerfile 
+> COPY index.html /usr/share/nginx/html
+// you can copy either a file or directory all together 
+//first parameter is the file/contents from the host and the second parameter is the container directory details (at this moment it is still image)
+
+---------------------------------------------------------------------------------------------------
+
+
+Environment variables
+Irrespective of the technology used in the container, we can access the environmental variables
+Technology      	Access
+Linux shell 	     $name
+.NET Core 	        .AddEnvironmentVariables();
+Java 	            System.getenv(“name”)
+Node.JS 	        process.env.name
+PHP 	             .$_ENV[“name”]
+Python          	os.environ.get(‘name’)
+.
+On the host machine we set the environmental variables on the system. Whereas in the system 
+< during runtime > In order to provide an environment variable’s value at runtime, you simply use the -e name=value parameter on the docker run command.
+.
+ using the ENV instruction, in the Dockerfile they can be defined. 
+.
+.
+ example :
+ dockerfile : 
+    FROM debian:8
+    ENV host=www.google.com
+    COPY ping.sh .
+    CMD ["sh", "ping.sh"]
+
+ Ping.sh
+    #!/bin/sh
+    echo "Pinging $host..."
+    ping -c 5 $host
+
+So notice that in the code/program only the variable is mentioned, it is defined in the dockerfile, this is helpful becasue everytime the credentials differ ,
+we dont have to change them in all positions in the program, instead change them in the docker file, before the image is build. 
+Also the usernames and passwords are not visible in plain sight in the code. 
+
+> docker run --rm pinger
+> docker run --rm -e host=www.bing.com pinger
+Now while running the docker image, in case we provide environment variables using -e switch, it will replace the default value provided. 
+---------------------------------------------------------------------------------------------------
+
+
+
+
+
+To build a docker image from a docker file, 
+> docker build -t <image_name> .
+// -t switch is added to given it a desirable name, when not given, assigns a randomly generated image name
+//the dot represents the current directory (given the docker file is present int he current directory)
+---------------------------------------------------------------------------------------------------
+
+VOLUME /path/to/directory
+This is a directory in the image file, this is mapped to the host or mroe pesistent storage when linked via -v switch during runtime, 
+during runtime if the -v directory is not provided, the storage remains as volatile. 
+---------------------------------------------------------------------------------------------------
+
+EXPOSE 80
+So a docker container by deafult is a isolated container, we can make a container interact/communicate/open to listening by mapping a host port to a container port. 
+This will redirect the traffic to the host post to the container port (hence commenucation)
+But inorder to assign and map, we need to first explore the respective port in the Dockerfile of the image, this is done with the EXPOSE command in the dockerfile
+
+Anyone who creates a container will need to explicitly bind that port to an actual port of the host machine using the -p switch of the docker run command. Only then the port can be used
+otherwise the connection is not possible. 
+---------------------------------------------------------------------------------------------------
+
+Environment variables are supported by the following list of instructions in the Dockerfile:
+
+    ADD
+    COPY
+    ENV
+    EXPOSE
+    FROM
+    LABEL
+    STOPSIGNAL
+    USER
+    VOLUME
+    WORKDIR
+    ONBUILD (when combined with one of the supported instructions above)
+---------------------------------------------------------------------------------------------------
+
+
