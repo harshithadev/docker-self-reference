@@ -1,0 +1,129 @@
+container orchestration : is basically managing large number of clusters on multiple docker hosts. 
+There are three tools currently available, docker swarm, Kubernetes and apache mesos.
+
+A docker swarm has many components that help us manage the swarm effectively.
+
+
+
+
+
+Building blocks of Docker swarm
+
+A swarm cluster can have the following components:
+
+    Node: The node is the host machine. A machine can act as a worker, manager, or both. 
+    We can have a swarm with one node as well. In that case, the respective machine acts as both a worker and manager node.
+    For example, In a cluster of 5 computers, each computer will be a node. And there will be a master computer 
+    which is responsible for the communication of the Cluster.
+
+    Stack: A set of services combined is called a stack. Stack and Compose work somewhat similarly, except, there 
+    are some commands which will be ignored by docker-compose in a non-swarm mode such as deploy.
+    For example, when we want to deploy our whole project which is a collection of services (like web server, 
+    database, and maybe a task queue) in a single command; we declare all the services in a YAML file, and that YAML file 
+    is now a stack of services for the swarm manager. The swarm manager will deploy the stack and maintain the desired states of 
+    services defined in the YAML file.
+
+    Service: A service is the definition of the tasks to execute on the manager or worker nodes. It is the central 
+    structure of the swarm system and the primary root of user interaction with the swarm. When you create a service, you specify which 
+    container image to use and which commands to execute inside running containers.
+    For example, The flask app we created earlier is a service. Why? Because we are using flask_app:2.0 docker image which will be running 
+    in a container with the command to run the WSGI server.
+
+    Task: Task is responsible for maintaining the desired replica set of the service. To deploy a service on a worker node, 
+    the swarm manager creates a task and starts a container in it.
+
+
+
+https://github.com/dockersamples/docker-swarm-visualizer
+visualizer to view the services and distribution 
+
+
+
+
+
+docker swarm 
+//checks and returns if docker is present
+
+docker swawrm init
+//initialises a 'swawrm' 
+
+returns something like this : 
+＄ docker swarm init
+Swarm initialized: current node (ayxwwpio1sksk5hi2bdqxanf4) is now a manager.
+To add a worker to this swarm, run the following command:
+    docker swarm join --token SWMTKN-1-19vn56bmfcc2l20jmts9gg9b152vkn47ruu6vtfwgsl3646ha2-8lcseq2vaegpjqytnnw1xgksn 192.168.65.3:2377
+To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
+
+docker service create <service name> 
+//allows us to create a service on swarm with a defined number of containers in it.
+example : docker service create --name web_app -p 5000:5000 venky8283/flask_app:3.0.
+another service exmaple : docker service create --name database --env-file [.env file location] --mount type=bind,src=[location of init.sql],dst=/docker-entrypoint-initdb.d/init.sql mysql/mysql-server:5.7
+
+we need to create a overlay network for the nodes in the swarm to communaicate.
+> docker network create --driver=overlay app
+and then add the services to the network
+> docker service update --network-add app web_app
+> docker service update --network-add app database
+
+docker service scale <service ID/Name>=Replicas_number
+//to scale up or down 
+
+=============================================================================
+
+after writing a stack file, 
+
+docker stack deploy <stack name> --compose-file=<location of docker-compose.yml file>
+
+docker service ls
+
+
+==============================================================================
+
+In this lesson, we will create a table of all the commands we have used in this section. 
+This will provide a faster reference to the commands. Let’s create a table of commands then below.
+Command 	                Options 	        Explanation
+
+docker swarm init 		                        Makes the current machine a swarm node
+
+docker swarm leave 	        -f 	                Removes the current node from a swarm cluster. The -f is used to force a manager node to leave a swarm cluster
+
+docker service create 
+<image name> 	            -p, --env_file, 
+                            --name, mount 	    Creates a service from an image. -p is used to map a host port to a service’s tasks ports.
+
+docker network create 
+<name> 	                    --driver 	        Creates a new network. --driver specifies which driver to use for the network
+
+docker service update 
+[Options] <service ID> 	    --network-add 	    Updates existing service. You can attach a new network using the --network-add option.
+
+docker service 
+[Command] --help 		                        A quick documentation of every command
+
+docker service ls 		                        Lists all the services running on the current node
+
+docker service scale 
+<service Id>=<replica number> 		            Scales services up and down using the replica numbers
+
+docker stack deploy 
+<stack name> 	            --compose-file 	    Deploys a new stack of services using a compose file. --compose-file specifies the compose-file to be used.
+
+docker stack ls 		                        Provides information about the current stack
+
+docker stack ps <stack_name> 	    	        Lists all the tasks or containers of a stack
+
+docker stack services <stack name> 	    	    Lists all the services in the stack
+
+docker stack rm <stack name> 		            Removes specified stack from swarm
+`` 		
+
+=================================================================================================================
+Steps for basic troubleshooting
+
+    Check for network connectivity between services
+    Check for port mappings
+    Check for any required volume mounts
+    Check for valid image name to start services
+    Check if the network used for connectivity exists
+    Only supported are commands
+    Check for any application-specific issues such as env variables or init scripts
